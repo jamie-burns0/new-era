@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "app"
+		}
+	],
+	"settings": {
+		"java.project.explorer.showNonJavaResources": true,
+		"java.dependency.packagePresentation": "flat",
+		"java.configuration.updateBuildConfiguration": "disabled",
+		"java.configuration.detectJdksAtStart": false,
+		"java.import.gradle.wrapper.enabled": true
+	}
+}
