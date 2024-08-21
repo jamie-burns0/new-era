@@ -1,0 +1,19 @@
+{
+	"folders": [
+                {
+                        "path": "app"
+                }
+        ],
+        "settings": {
+                "java.project.explorer.showNonJavaResources": true,
+                "java.dependency.packagePresentation": "flat",
+                "java.configuration.updateBuildConfiguration": "disabled",
+                "java.configuration.detectJdksAtStart": false,
+                "java.import.gradle.enabled": false,
+                "java.import.gradle.wrapper.enabled": false,
+                "java.import.gradle.annotationProcessing.enabled": false,
+                "java.import.gradle.version": "8.10",
+                "java.import.gradle.java.home": "/opt/java/jdk-22.0.2",
+                "java.import.gradle.home": "/opt/gradle/gradle-8.10"
+        }
+}
