@@ -17,4 +17,4 @@ See,
 
 - was not able to apply DOP to GroupFiles as sealed...permits prevents Mockito from mocking - it can't create a mock because the mock class it instantiates is not in the permits list
 - classes modelling data are only data, so, there is no value in unit testing them
-- trying to apply DOP to GroupFiles and being blocked by Mockito, it probably a smell that GroupFiles are not classes modelling data and only data
+- trying to apply DOP to GroupFiles and being blocked by Mockito - probably a smell that GroupFiles are not classes modelling data and only data

@@ -10,16 +10,14 @@ import me.jamieburns.data.FileData;
 import me.jamieburns.operations.Action;
 import me.jamieburns.operations.ActionSupport;
 import me.jamieburns.operations.FolderSupport;
-import me.jamieburns.operations.GroupFilesByChunkHash;
-import me.jamieburns.operations.GroupFilesByFullHash;
-import me.jamieburns.operations.GroupFilesBySize;
+import me.jamieburns.operations.GroupFilesSupport;
 import me.jamieburns.operations.KeepAction;
 import me.jamieburns.operations.RemoveAction;
 
 public class CleanUpFiles {
 
     public static void main(String[] args) {
-        
+
         var actionList = buildActionList();
 
         var moveActionCount = actionList.stream()
@@ -34,13 +32,12 @@ public class CleanUpFiles {
 
         actionList.stream()
                 //.filter( action -> action instanceof RemoveAction )
-                .forEach( a -> System.out.println( "[%s], %s, (%s bytes), %s, [%s], [%s]".formatted(
+                .forEach( a -> System.out.println( "[%s], %s, (%s bytes), %s, [%s]".formatted(
                         a.getClass().getSimpleName(),
                         a.data().filename(),
                         a.data().sizeInBytes(),
                         a.data().path(),
-                        a.data().chunkHash(),
-                        a.data().fullHash()
+                        a.data().hash()
                 )));
     }
 
@@ -56,20 +53,20 @@ public class CleanUpFiles {
         // get our list of files from walking the folder tree
 
         List<FileData> fileDataList =
-            new FolderSupport().fileStream( new File( path ), filenameFilter )
+            FolderSupport.fileStream( new File( path ), filenameFilter )
                 .collect(Collectors.toList());
 
         // pass one
         // - group files by file size
         // - add actions for unique files and remove them from the map
 
-        Map<Long, List<FileData>> filesGroupedBySizeMap = new GroupFilesBySize().groupFiles( fileDataList );
-        
+        Map<Long, List<FileData>> filesGroupedBySizeMap = GroupFilesSupport.groupFilesBySize( fileDataList );
+
         System.out.println( "Pass 1: [filesGroupedBySizeMap.size=%s]".formatted( filesGroupedBySizeMap.size()));
 
         var actionList = new ArrayList<Action<FileData>>();
 
-        var result = new ActionSupport().actionListForUniqueFiles( filesGroupedBySizeMap );
+        var result = ActionSupport.actionListForUniqueFiles( filesGroupedBySizeMap );
 
         System.out.println( "Pass 1: result.groupByMap.size=%s".formatted( result.groupByMap().size()));
         System.out.println( "Pass 1: result.actionList.size=%s".formatted( result.actionList().size()));
@@ -87,9 +84,9 @@ public class CleanUpFiles {
         // - group files by hashing a chunk of the file contents
         // - add actions unique files and remove them from the map
 
-        Map<String, List<FileData>> filesGroupedByChunkHashMap = new GroupFilesByChunkHash().regroupFiles(result.groupByMap());
+        Map<String, List<FileData>> filesGroupedByChunkHashMap = GroupFilesSupport.regroupFilesByChunkHash(result.groupByMap());
 
-        result = new ActionSupport().actionListForUniqueFiles(filesGroupedByChunkHashMap);
+        result = ActionSupport.actionListForUniqueFiles(filesGroupedByChunkHashMap);
 
         System.out.println( "Pass 2: result.groupByMap.size=%s".formatted( result.groupByMap().size()));
         System.out.println( "Pass 2: result.actionList.size=%s".formatted( result.actionList().size()));
@@ -107,9 +104,9 @@ public class CleanUpFiles {
         // - group files by hashing the full file contents
         // - add actions unique files and remove them from the map
 
-        Map<String, List<FileData>> filesGroupedByFullHashMap = new GroupFilesByFullHash().regroupFiles(result.groupByMap());
-        
-        result = new ActionSupport().actionListForUniqueFiles(filesGroupedByFullHashMap);
+        Map<String, List<FileData>> filesGroupedByFullHashMap = GroupFilesSupport.regroupFilesByFullHash(result.groupByMap());
+
+        result = ActionSupport.actionListForUniqueFiles(filesGroupedByFullHashMap);
 
         System.out.println( "Pass 3: result.groupByMap.size=%s".formatted( result.groupByMap().size()));
         System.out.println( "Pass 3: result.actionList.size=%s".formatted( result.actionList().size()));
@@ -126,8 +123,8 @@ public class CleanUpFiles {
         // pass four
         // - any entries remaining in our filesGroupedByFullHashMap are duplicates
         // - add actions for duplicate files
-        
-        result = new ActionSupport().actionListForDuplicateFiles( filesGroupedByFullHashMap );
+
+        result = ActionSupport.actionListForDuplicateFiles( filesGroupedByFullHashMap );
 
         System.out.println( "Pass 4: result.groupByMap.size=%s".formatted( result.groupByMap().size()));
         System.out.println( "Pass 4: result.actionList.size=%s".formatted( result.actionList().size()));
@@ -143,11 +140,11 @@ public class CleanUpFiles {
      My approach was to incrementally split files into buckets, throwing out any buckets containing only one file.
 
      1. Group files based on size. Discard groups containing only one entry.
-     2. Divide up each group into smaller groups based on the first X kilobytes of each file. Discard groups which now contain only one entry. 
+     2. Divide up each group into smaller groups based on the first X kilobytes of each file. Discard groups which now contain only one entry.
         (Tune the X based on the block size for your filesystem.)
      3. Either hash all remaining files in series and use that to do the final dividing up into groups
         (best performance on rotating platter drives) or open all the files in a bucket and then read and compare
-        chunks from them in parallel (bit-for-bit equality but needs an SSD to avoid crazy seek time overhead) to 
+        chunks from them in parallel (bit-for-bit equality but needs an SSD to avoid crazy seek time overhead) to
         subdivide into new buckets. Discard groups containing only one entry.
      4. You now have your sets of duplicates.
 

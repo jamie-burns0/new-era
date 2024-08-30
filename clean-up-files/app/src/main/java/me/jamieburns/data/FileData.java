@@ -3,10 +3,11 @@ package me.jamieburns.data;
 import java.util.Objects;
 import java.util.Optional;
 
-public record FileData( String filename, String path, long sizeInBytes, Optional<String> chunkHash, Optional<String> fullHash ) {
+public record FileData( String filename, String path, long sizeInBytes, Optional<String> hash ) {
 
     public FileData {
         Objects.requireNonNull( filename );
+        Objects.requireNonNull( path );
         if ( sizeInBytes < 0 ) {
             throw new RuntimeException( "Cannot create FileData record with a negative sizeInBytes. Expected positive value, got %s".formatted( sizeInBytes ));
         }
@@ -17,8 +18,7 @@ public record FileData( String filename, String path, long sizeInBytes, Optional
         private String filename;
         private String path;
         private long sizeInBytes;
-        private Optional<String> chunkHash = Optional.empty();
-        private Optional<String> fullHash = Optional.empty();
+        private Optional<String> hash = Optional.empty();
 
         public Builder filename(String filename) {
             this.filename = filename;
@@ -35,18 +35,13 @@ public record FileData( String filename, String path, long sizeInBytes, Optional
             return this;
         }
 
-        public Builder chunkHash(String chunkHash) {
-            this.chunkHash = Optional.ofNullable( chunkHash );
-            return this;
-        }
-
-        public Builder fullHash(String fullHash) {
-            this.fullHash = Optional.ofNullable( fullHash );
+        public Builder hash(String hash) {
+            this.hash = Optional.ofNullable( hash );
             return this;
         }
 
         public Builder fromFileData( FileData fileData ) {
-            
+
             if( fileData == null ) {
                 return this;
             }
@@ -54,14 +49,13 @@ public record FileData( String filename, String path, long sizeInBytes, Optional
             this.filename = fileData.filename;
             this.path = fileData.path;
             this.sizeInBytes = fileData.sizeInBytes;
-            this.chunkHash = fileData.chunkHash;
-            this.fullHash = fileData.fullHash;
+            this.hash = fileData.hash;
 
             return this;
         }
 
         public FileData build() {
-            return new FileData(filename, path, sizeInBytes, chunkHash, fullHash);
+            return new FileData(filename, path, sizeInBytes, hash);
         }
     }
 }

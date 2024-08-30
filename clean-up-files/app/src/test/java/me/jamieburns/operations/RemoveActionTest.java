@@ -27,18 +27,15 @@ public class RemoveActionTest {
         assertThat( ra.data().filename() ).isEqualTo( expectedFileName );
         assertThat( ra.data().path() ).isEqualTo( expectedPath );
         assertThat( ra.data().sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( ra.data().chunkHash() ).isEmpty();
-        assertThat( ra.data().fullHash() ).isEmpty();
+        assertThat( ra.data().hash() ).isEmpty();
 
-        var expectedChunkHash = "ch";
-        var expectedFullHash = "fh";
+        var expectedHash = "hash";
 
         var fd2 = new FileData.Builder()
             .filename( expectedFileName )
             .path( expectedPath )
             .sizeInBytes( expectedSizeInBytes )
-            .chunkHash( expectedChunkHash )
-            .fullHash( expectedFullHash )
+            .hash( expectedHash )
             .build();
 
         var ra2 = new KeepAction<>( fd2 );
@@ -47,7 +44,6 @@ public class RemoveActionTest {
         assertThat( ra2.data().filename() ).isEqualTo( expectedFileName );
         assertThat( ra2.data().path() ).isEqualTo( expectedPath );
         assertThat( ra2.data().sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( ra2.data().chunkHash() ).contains( expectedChunkHash );
-        assertThat( ra2.data().fullHash() ).contains( expectedFullHash );
+        assertThat( ra2.data().hash() ).contains( expectedHash );
     }
 }

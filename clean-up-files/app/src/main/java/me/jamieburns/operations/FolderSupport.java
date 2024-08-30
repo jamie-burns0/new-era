@@ -15,19 +15,21 @@ public class FolderSupport {
 
     private static final Predicate<String> DEFAULT_FILENAME_PREDICATE = Pattern.compile( ".*" ).asPredicate();
 
-    public Stream<FileData> fileStream( File folder ) {
+    private FolderSupport() {}
+
+    public static final Stream<FileData> fileStream( File folder ) {
         return walkFolder( folder, DEFAULT_FILENAME_PREDICATE ).stream();
     }
 
-    public Stream<FileData> fileStream( File folder, String matchFilenameToRegex ) {
+    public static final Stream<FileData> fileStream( File folder, String matchFilenameToRegex ) {
         return walkFolder( folder, Pattern.compile( matchFilenameToRegex ).asPredicate() ).stream();
     }
 
-    public List<FileData> walkFolder( File folder, Predicate<String> filenamePredicate ) {
-        
+    private static final List<FileData> walkFolder( File folder, Predicate<String> filenamePredicate ) {
+
         var fileDataList = new ArrayList<FileData>();
         var folderStack = new LinkedList<File>();
-        
+
         folderStack.push( folder );
 
         while ( folderStack.isEmpty() == false ) {
@@ -46,13 +48,13 @@ public class FolderSupport {
         return fileDataList;
     }
 
-    public List<FileData> buildFileDataList( File folder, Predicate<String> filenamePredicate ) {
+    private static final List<FileData> buildFileDataList( File folder, Predicate<String> filenamePredicate ) {
 
         if( folder == null || folder.isDirectory() == false ) {
             return List.of(); // Empty folder
         }
 
-        var fileDataSet = 
+        var fileDataSet =
             Stream.of( folder.listFiles() )
                   .filter(File::isFile)
                   .filter( f -> filenamePredicate.test( f.getName() ) )

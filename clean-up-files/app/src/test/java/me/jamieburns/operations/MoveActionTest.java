@@ -27,18 +27,15 @@ public class MoveActionTest {
         assertThat( ma.data().filename() ).isEqualTo( expectedFileName );
         assertThat( ma.data().path() ).isEqualTo( expectedPath );
         assertThat( ma.data().sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( ma.data().chunkHash() ).isEmpty();
-        assertThat( ma.data().fullHash() ).isEmpty();
+        assertThat( ma.data().hash() ).isEmpty();
 
-        var expectedChunkHash = "ch";
-        var expectedFullHash = "fh";
+        var expectedHash = "hash";
 
         var fd2 = new FileData.Builder()
             .filename( expectedFileName )
             .path( expectedPath )
             .sizeInBytes( expectedSizeInBytes )
-            .chunkHash( expectedChunkHash )
-            .fullHash( expectedFullHash )
+            .hash( expectedHash )
             .build();
 
         var ma2 = new KeepAction<>( fd2 );
@@ -47,7 +44,6 @@ public class MoveActionTest {
         assertThat( ma2.data().filename() ).isEqualTo( expectedFileName );
         assertThat( ma2.data().path() ).isEqualTo( expectedPath );
         assertThat( ma2.data().sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( ma2.data().chunkHash() ).contains( expectedChunkHash );
-        assertThat( ma2.data().fullHash() ).contains( expectedFullHash );
+        assertThat( ma2.data().hash() ).contains( expectedHash );
     }
 }

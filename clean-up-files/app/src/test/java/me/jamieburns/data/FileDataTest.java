@@ -13,16 +13,14 @@ public class FileDataTest {
         var expectedFileName = "test string";
         var expectedPath = "test path";
         var expectedSizeInBytes = 100L;
-        var expectedChunkHash = Optional.of( "chunk hash string");
-        var expectedFullHash = Optional.of( "full hash string" );
+        var expectedHash = Optional.of( "hash string");
 
-        var fd = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, expectedChunkHash, expectedFullHash );
-        
+        var fd = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, expectedHash );
+
         assertThat( fd.filename() ).isEqualTo( expectedFileName );
         assertThat( fd.path() ).isEqualTo( expectedPath );
         assertThat( fd.sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( fd.chunkHash() ).isEqualTo( expectedChunkHash );
-        assertThat( fd.fullHash() ).isEqualTo( expectedFullHash );
+        assertThat( fd.hash() ).isEqualTo( expectedHash );
     }
 
 
@@ -38,12 +36,11 @@ public class FileDataTest {
                 .path( expectedPath )
                 .sizeInBytes( expectedSizeInBytes )
                 .build();
-        
+
         assertThat( fd.filename() ).isEqualTo( expectedFileName );
         assertThat( fd.path() ).isEqualTo( expectedPath );
         assertThat( fd.sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( fd.chunkHash() ).isEmpty();
-        assertThat( fd.fullHash() ).isEmpty();
+        assertThat( fd.hash() ).isEmpty();
     }
 
 
@@ -53,22 +50,18 @@ public class FileDataTest {
         var expectedFileName = "test string";
         var expectedPath = "test path";
         var expectedSizeInBytes = 100L;
-        var expectedChunkHash = "chunk hash string";
-        var expectedFullHash = "full hash string";
+        var expectedHash = "hash string";
 
         var fd = new FileData.Builder()
                 .filename( expectedFileName)
                 .path( expectedPath)
                 .sizeInBytes( expectedSizeInBytes )
-                .chunkHash( expectedChunkHash )
-                .fullHash( expectedFullHash )
+                .hash( expectedHash )
                 .build();
-        
+
         assertThat( fd.filename() ).isEqualTo( expectedFileName );
         assertThat( fd.path() ).isEqualTo( expectedPath );
         assertThat( fd.sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( fd.chunkHash() ).contains( expectedChunkHash );
-        assertThat( fd.fullHash() ).contains( expectedFullHash );
     }
 
 
@@ -78,10 +71,9 @@ public class FileDataTest {
         var expectedFileName = "test string";
         var expectedPath = "test path";
         var expectedSizeInBytes = 100L;
-        var expectedChunkHash = Optional.of("chunk hash string");
-        var expectedFullHash = Optional.of("full hash string");
+        var expectedHash = Optional.of("hash string");
 
-        var fd1 = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, expectedChunkHash, expectedFullHash );
+        var fd1 = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, expectedHash );
 
         var fd2 = new FileData.Builder()
                 .fromFileData( fd1 )
@@ -98,18 +90,16 @@ public class FileDataTest {
         var expectedFileName = "test string";
         var expectedPath = "test path";
         var expectedSizeInBytes = 100L;
-        var expectedChunkHash = "chunk hash string";
-        var expectedFullHash = "full hash string";
+        var expectedHash = "hash string";
 
-        var fd1 = new FileData( "fn", "p", 1, Optional.of("ch"), Optional.of("fh") );
+        var fd1 = new FileData( "fn", "p", 1, Optional.of("ch") );
 
         var fd2 = new FileData.Builder()
                 .fromFileData( fd1 )
                 .filename( expectedFileName )
                 .path( expectedPath )
                 .sizeInBytes( expectedSizeInBytes )
-                .chunkHash( expectedChunkHash )
-                .fullHash( expectedFullHash )
+                .hash( expectedHash )
                 .build();
 
         assertThat( fd2 ).isNotSameAs( fd1 );
@@ -117,8 +107,7 @@ public class FileDataTest {
         assertThat( fd2.filename() ).isEqualTo( expectedFileName );
         assertThat( fd2.path() ).isEqualTo( expectedPath );
         assertThat( fd2.sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( fd2.chunkHash() ).contains( expectedChunkHash );
-        assertThat( fd2.fullHash() ).contains( expectedFullHash );
+        assertThat( fd2.hash() ).contains( expectedHash );
     }
 
     @Test
@@ -127,15 +116,14 @@ public class FileDataTest {
         var expectedFileName = "overridden filename";
         var expectedPath = "original path";
         var expectedSizeInBytes = 100L;
-        var expectedChunkHash = "overridden chunk hash string";
-        var expectedFullHash = "original full hash string";
+        var expectedHash = "overridden hash string";
 
-        var fd1 = new FileData( "filename will be overridden", expectedPath, expectedSizeInBytes, Optional.of("chunk hash string will be overridden"), Optional.of(expectedFullHash) );
+        var fd1 = new FileData( "filename to override", expectedPath, expectedSizeInBytes, Optional.of("hash string to override") );
 
         var fd2 = new FileData.Builder()
                 .fromFileData( fd1 )
                 .filename( expectedFileName )
-                .chunkHash( expectedChunkHash )
+                .hash( expectedHash )
                 .build();
 
         assertThat( fd2 ).isNotSameAs( fd1 );
@@ -143,8 +131,7 @@ public class FileDataTest {
         assertThat( fd2.filename() ).isEqualTo( expectedFileName );
         assertThat( fd2.path() ).isEqualTo( expectedPath );
         assertThat( fd2.sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( fd2.chunkHash() ).contains( expectedChunkHash );
-        assertThat( fd2.fullHash() ).contains( expectedFullHash );
+        assertThat( fd2.hash() ).contains( expectedHash );
     }
 
 
@@ -154,17 +141,15 @@ public class FileDataTest {
         var expectedFileName = "test string";
         var expectedPath = "test path";
         var expectedSizeInBytes = 100L;
-        var expectedChunkHash = "chunk hash string";
-        var expectedFullHash = "full hash string";
+        var expectedHash = "hash string";
 
-        var fd1 = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, Optional.of(expectedChunkHash), Optional.of(expectedFullHash) );
+        var fd1 = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, Optional.of(expectedHash) );
 
         var fd2 = new FileData.Builder()
                 .filename( "fn" )
                 .path( "p" )
                 .sizeInBytes( 1 )
-                .chunkHash( "ch" )
-                .fullHash( "fh" )
+                .hash( "ch" )
                 .fromFileData( fd1 )
                 .build();
 
@@ -173,7 +158,6 @@ public class FileDataTest {
         assertThat( fd2.filename() ).isEqualTo( expectedFileName );
         assertThat( fd2.path() ).isEqualTo( expectedPath );
         assertThat( fd2.sizeInBytes() ).isEqualTo( expectedSizeInBytes );
-        assertThat( fd2.chunkHash() ).contains( expectedChunkHash );
-        assertThat( fd2.fullHash() ).contains( expectedFullHash );
-    }   
+        assertThat( fd2.hash() ).contains( expectedHash );
+    }
 }
