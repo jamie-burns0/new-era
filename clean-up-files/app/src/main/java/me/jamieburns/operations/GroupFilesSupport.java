@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class GroupFilesSupport {
     public static final Map<Long, List<FileData>> groupFilesBySize(List<FileData> fileDataList) {
 
         if( fileDataList == null || fileDataList.isEmpty() ) {
-            return Map.<Long, List<FileData>>of();
+            return Map.of();
         }
 
         return fileDataList.stream()
@@ -38,7 +39,7 @@ public class GroupFilesSupport {
     // private static final Map<Long, List<FileData>> groupFilesBySizeInMutableMapImpl( List<FileData> fileDataList ) {
 
     //     if( fileDataList == null || fileDataList.isEmpty() ) {
-    //         return Map.<Long, List<FileData>>of();
+    //         return Map.of();
     //     }
 
     //     return fileDataList.stream()
@@ -131,28 +132,6 @@ public class GroupFilesSupport {
     }
 
 
-    // //@Override
-    // private static final Map<String, List<FileData>> regroupFilesByHash( Map<?, List<FileData>> fileDataGroupedByAnything ) {
-
-    //     if( fileDataGroupedByAnything == null || fileDataGroupedByAnything.isEmpty() ) {
-    //         return Map.of();
-    //     }
-
-    //     Map<String, List<FileData>> fileDataRegroupedByHash = new HashMap<>();
-
-    //     for( var fileDataList : fileDataGroupedByAnything.values() ) {
-
-    //         Map<String, List<FileData>> regroupedFileData = groupFiles( fileDataList );
-
-    //         for( var key : regroupedFileData.keySet() ) {
-    //             fileDataRegroupedByHash.computeIfAbsent( key, unused -> new ArrayList<FileData>() );
-    //             fileDataRegroupedByHash.get( key ).addAll( regroupedFileData.get( key ) );
-    //         }
-    //     }
-
-    //     return fileDataRegroupedByHash;
-    // }
-
     /**
      * For reference only. Implementation of regroupFiles using Stream and Collectors apis
      */
@@ -176,7 +155,6 @@ public class GroupFilesSupport {
     // }
 
 
-    //@Override
     private static final Map<String, List<FileData>> groupFilesByHash(
                 List<FileData> fileDataList,
                 ThrowingBiFunction<FileData, Long, String, Exception> hashFn ) {
@@ -198,8 +176,6 @@ public class GroupFilesSupport {
             ThrowingBiFunction<FileData, Long, String, Exception> hashFn ) throws Exception {
 
         long chunkSize = calculateChunkSize( fileDataList );
-
-        System.out.println( "[chunkSize=%s]".formatted(chunkSize));
 
         Map<String, List<FileData>> groupByHashMap = new HashMap<>();
 
@@ -253,8 +229,6 @@ public class GroupFilesSupport {
         FileStore fileStore = Files.getFileStore(Paths.get(fileDataList.get(0).path()));
         blockSize = fileStore.getBlockSize();
 
-        System.out.println("Block size of the filesystem: " + blockSize);
-
         var idealChunkSize = Math.max((long) Math.ceil(maxFileSize * 0.2), 1);
 
         return Math.ceilDiv(idealChunkSize, blockSize) * blockSize;
@@ -268,4 +242,57 @@ public class GroupFilesSupport {
     interface ThrowingBiFunction<T, U, R, E extends Exception> {
         R apply(T t, U u) throws E;
     }
+
+
+    public static final PartitionResult partitionOnUniqueness( Map<?, List<FileData>> groupedByMap ) {
+
+        if( groupedByMap == null || groupedByMap.isEmpty() ) {
+            return new PartitionResult( List.of(), Map.of() );
+        }
+
+        List<FileData> uniqueItemList = new LinkedList<>();
+        Map<Object, List<FileData>> nonUniqueItemMap = new HashMap<>();
+
+        groupedByMap.entrySet().stream()
+                .forEach( e -> {
+                    if( e.getValue().size() == 1 ) {
+                        uniqueItemList.add( e.getValue().get(0) );
+                    }
+                    else {
+                        nonUniqueItemMap.put( e.getKey(), e.getValue() );
+                    }
+                });
+
+        return new PartitionResult( uniqueItemList, nonUniqueItemMap );
+    }
+
+
+    public static final PartitionResult partitionOnZeroLengthFileSize( Map<Long, List<FileData>> filesGroupedBySizeMap ) {
+
+        if( filesGroupedBySizeMap == null || filesGroupedBySizeMap.isEmpty() ) {
+            return new PartitionResult( List.of(), Map.of() );
+        }
+
+        if( filesGroupedBySizeMap.containsKey( 0L ) == false ) {
+            return new PartitionResult( List.of(), filesGroupedBySizeMap );
+        }
+
+        List<FileData> zeroLengthItemList = new LinkedList<>();
+        Map<Long, List<FileData>> nonZeroLengthItemMap = new HashMap<>();
+
+        filesGroupedBySizeMap.entrySet().stream()
+                .forEach( e -> {
+                    if( e.getKey() == 0 ) {
+                        zeroLengthItemList.addAll( e.getValue() );
+                    }
+                    else {
+                        nonZeroLengthItemMap.put( e.getKey(), e.getValue() );
+                    }
+                });
+
+        return new PartitionResult( zeroLengthItemList, nonZeroLengthItemMap );
+    }
+
+
+    public record PartitionResult( List<FileData> positivePartitionList, Map<?, List<FileData>> negativePartitionMap ) {}
 }

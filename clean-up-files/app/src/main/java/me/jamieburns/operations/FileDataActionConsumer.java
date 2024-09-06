@@ -10,6 +10,7 @@ public class FileDataActionConsumer implements Consumer<Action<FileData>> {
     public void accept( Action<FileData> action ) {
         switch( action ) {
             case KeepAction<FileData> move -> System.out.println( "[move] %s to ...".formatted(move.data().path() ) );
+            case KeepWithRenameAction<FileData> rename -> System.out.println( "[rename] %s to ...".formatted( rename.data().path() ) );
             case RemoveAction<FileData> remove -> System.out.println( "[remove] %s".formatted( remove.data().path() ) );
         };
     }

@@ -1,7 +1,7 @@
 package me.jamieburns.operations;
 
 public sealed interface Action<T>
-    permits KeepAction, RemoveAction {
+    permits KeepAction, KeepWithRenameAction, RemoveAction {
 
     T data();
 }
