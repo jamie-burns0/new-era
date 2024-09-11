@@ -19,6 +19,7 @@
                 "java.signatureHelp.enabled": false,
                 "editor.quickSuggestionsDelay": 3000,
                 "editor.inlineSuggest.showToolbar": "onHover",
-                "editor.inlineSuggest.enabled": false
+                "editor.inlineSuggest.enabled": false,
+                "editor.detectIndentation": false
         }
 }

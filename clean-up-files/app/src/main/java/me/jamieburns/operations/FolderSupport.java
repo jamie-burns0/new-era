@@ -17,11 +17,11 @@ public class FolderSupport {
 
     private FolderSupport() {}
 
-    public static final Stream<FileData> fileStream( File folder ) {
+    static final Stream<FileData> fileStream( File folder ) {
         return walkFolder( folder, DEFAULT_FILENAME_PREDICATE ).stream();
     }
 
-    public static final Stream<FileData> fileStream( File folder, String matchFilenameToRegex ) {
+    static final Stream<FileData> fileStream( File folder, String matchFilenameToRegex ) {
         return walkFolder( folder, Pattern.compile( matchFilenameToRegex ).asPredicate() ).stream();
     }
 

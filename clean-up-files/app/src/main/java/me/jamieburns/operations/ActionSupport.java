@@ -1,6 +1,6 @@
 package me.jamieburns.operations;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,39 +12,40 @@ public class ActionSupport {
 
     private ActionSupport() {}
 
-    public static final List<Action<FileData>> actionListForZeroLengthFiles( List<FileData> zeroLengthItemsList ) {
+    public static final List<Action<FileData>> actionListForZeroLengthFiles( List<FileData> fileDataList ) {
 
-        if( zeroLengthItemsList == null || zeroLengthItemsList.isEmpty() ) {
+        if( fileDataList == null || fileDataList.isEmpty() ) {
             return List.of();
         }
 
-        return zeroLengthItemsList.stream()
+        return fileDataList.stream()
                 .filter( fd -> fd.sizeInBytes() == 0 )
                 .map( item -> new RemoveAction<FileData>( item ) )
                 .collect( Collectors.toList() );
     }
 
 
-    public static final List<Action<FileData>> actionListForUniqueFiles( List<FileData> uniqueItemsList ) {
+    public static final List<Action<FileData>> actionListForUniqueFiles( List<FileData> fileDataList ) {
 
-        if( uniqueItemsList == null || uniqueItemsList.isEmpty() ) {
+        if( fileDataList == null || fileDataList.isEmpty() ) {
             return List.of();
         }
 
-        return uniqueItemsList.stream()
+        return fileDataList.stream()
                 .map( item -> new KeepAction<>( item ) )
                 .collect( Collectors.toList() );
     }
 
-    public static final List<Action<FileData>> actionListForDuplicateFiles( Map<?, List<FileData>> nonUniqueItemMap ) {
 
-        if( nonUniqueItemMap == null || nonUniqueItemMap.isEmpty() ) {
+    public static final List<Action<FileData>> actionListForDuplicateFiles( Map<?, List<FileData>> groupedItemsMap ) {
+
+        if( groupedItemsMap == null || groupedItemsMap.isEmpty() ) {
             return List.of();
         }
 
-        var actionList = new ArrayList<Action<FileData>>();
+        var actionList = new LinkedList<Action<FileData>>();
 
-        for( var list : nonUniqueItemMap.values() ) {
+        for( var list : groupedItemsMap.values() ) {
 
             actionList.add( new KeepAction<>(list.get(0)));
 
@@ -57,35 +58,49 @@ public class ActionSupport {
     }
 
 
-    public static final List<Action<FileData>> actionListFromGroupedActionList( Map<?, List<Action<FileData>>> groupedActionMap ) {
+    public static final List<Action<FileData>> actionListForUniqueFilesWithDuplicateFilename( List<FileData> fileDataList ) {
 
-            if( groupedActionMap == null || groupedActionMap.isEmpty() ) {
-                return List.of();
-            }
-
-            return groupedActionMap.values().stream()
-                    .flatMap( List::stream )
-                    .collect( Collectors.toList() );
-
-    }
-
-    public static final List<Action<FileData>> actionListForKeepActionWithDuplicateFilename( Map<?, List<Action<FileData>>> actionListGroupedByFilenameMap ) {
-
-        if( actionListGroupedByFilenameMap == null || actionListGroupedByFilenameMap.size() == 0 ) {
+        if( fileDataList == null || fileDataList.isEmpty() ) {
             return List.of();
         }
 
-        var actionList = new ArrayList<Action<FileData>>();
+        var groupByFilenameMap = GroupFilesSupport.groupFilesByFilename( fileDataList );
 
-        for( var list : actionListGroupedByFilenameMap.values() ) {
+        var actionList = new LinkedList<Action<FileData>>();
 
-            actionList.add( new KeepAction<>(list.get(0).data()));
+        for( var list : groupByFilenameMap.values() ) {
+
+            actionList.add( new KeepAction<FileData>( list.get(0) ) );
 
             for( var index = 1; index < list.size(); index++ ) {
-                actionList.add( new KeepWithRenameAction<FileData>( list.get(index).data()));
+                actionList.add( new KeepWithRenameAction<FileData>( list.get(index) ) );
             }
         }
 
         return actionList;
+    }
+
+
+    public static final List<Action<FileData>> actionListForKeepActionWithDuplicateFilename( List<Action<FileData>> actionList ) {
+
+        if( actionList == null || actionList.size() == 0 ) {
+            return List.of();
+        }
+
+        var groupedByList = actionList.stream()
+                .collect( Collectors.groupingBy( a -> a.data().filename() ) );
+
+        List<Action<FileData>> newActionList = new LinkedList<>();
+
+        for( var list : groupedByList.values() ) {
+
+            newActionList.add( new KeepAction<>(list.get(0).data()));
+
+            for( var index = 1; index < list.size(); index++ ) {
+                newActionList.add( new KeepWithRenameAction<FileData>( list.get(index).data()));
+            }
+        }
+
+        return newActionList;
     }
 }

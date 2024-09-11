@@ -21,7 +21,7 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentIsAListOfFileDataWhereAllFilesAreZeroLength_ActionListForZeroLengthFiles_ReturnsEachItemWrappedInARemoveAction() {
+    void whenArgumentIsAListOfFileDataWhereAllFilesAreZeroLength_actionListForZeroLengthFiles_ReturnsEachItemWrappedInARemoveAction() {
 
         var fd1 = new FileData.Builder()
                 .filename("file1")
@@ -46,7 +46,7 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentIsAListOfFileDataWhereSomeFilesAreZeroLength_ActionListForZeroLengthFiles_ReturnsEachZeroLengthItemWrappedInARemoveAction() {
+    void whenArgumentIsAListOfFileDataWhereSomeFilesAreZeroLength_actionListForZeroLengthFiles_ReturnsEachZeroLengthItemWrappedInARemoveAction() {
 
         var zeroLengthFile = 0L;
         var nonZeroLengthFile = 1L;
@@ -87,7 +87,7 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentIsAListOfFileDataActionListForUniqueFilesReturnsEachItemWrappedInAKeepAction() {
+    void whenArgumentIsAListOfFileData_actionListForUniqueFiles_ReturnsEachItemWrappedInAKeepAction() {
 
         var fd1 = new FileData.Builder()
                 .filename("file1")
@@ -110,14 +110,14 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentIsANullOrEmptyMapActionListForDuplicateFilesReturnsAnEmptyList() {
+    void whenArgumentIsANullOrEmptyMap_actionListForDuplicateFiles_ReturnsAnEmptyList() {
         assertThat( ActionSupport.actionListForDuplicateFiles( null )).isEmpty();
         assertThat( ActionSupport.actionListForDuplicateFiles( Map.of() )).isEmpty();
     }
 
 
     @Test
-    void whenArgumentContainsOnlySingleItemListsActionListForDuplicateFilesReturnsEachListItemWrappedInAKeepAction() {
+    void whenArgumentContainsOnlySingleItemLists_actionListForDuplicateFiles_ReturnsEachListItemWrappedInAKeepAction() {
 
         var fd1 = new FileData.Builder()
                 .filename("file1")
@@ -143,7 +143,7 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentContainsOnlyMultipleItemListsActionListForDuplicateFilesReturnsEachListItemWrappedInAKeepActionOrARemoveAction() {
+    void whenArgumentContainsOnlyMultipleItemLists_actionListForDuplicateFiles_ReturnsEachListItemWrappedInAKeepActionOrARemoveAction() {
 
         var fd1 = new FileData.Builder()
                 .filename("file1")
@@ -178,7 +178,7 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentContainsBothSingleItemListsAndMultipleItemLists_ActionListForDuplicateFiles_ReturnsEachItemWrappedInAKeepActionOrARemoveAction() {
+    void whenArgumentContainsBothSingleItemListsAndMultipleItemLists_actionListForDuplicateFiles_ReturnsEachItemWrappedInAKeepActionOrARemoveAction() {
 
         var singleItemSize = 1L;
         var multipleItemSize = 2L;
@@ -222,14 +222,14 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentIsNullOrEmpty_ActionListForKeepActionWithDuplicateFilename_ReturnsAnEmptyList() {
+    void whenArgumentIsNullOrEmpty_actionListForKeepActionWithDuplicateFilename_ReturnsAnEmptyList() {
         assertThat( ActionSupport.actionListForKeepActionWithDuplicateFilename(null)).isEmpty();
-        assertThat( ActionSupport.actionListForKeepActionWithDuplicateFilename(Map.of())).isEmpty();
+        assertThat( ActionSupport.actionListForKeepActionWithDuplicateFilename(List.of())).isEmpty();
     }
 
 
     @Test
-    void whenArgumentContainsOnlySingleItemKeepActionLists_ActionListForKeepActionWithDuplicateFilename_ReturnsEachItemWrappedInAKeepAction() {
+    void whenArgumentContainsOnlySingleItemKeepActionLists_actionListForKeepActionWithDuplicateFilename_ReturnsEachItemWrappedInAKeepAction() {
 
         var fd1 = new FileData.Builder()
                 .filename("file1")
@@ -243,12 +243,12 @@ public class ActionSupportTest {
                 .sizeInBytes( 2L )
                 .build();
 
-        var map = Stream.of(fd1, fd2)
+        var list = Stream.of(fd1, fd2)
                         .map( KeepAction::new )
                         .map(a -> (Action<FileData>) a)
-                        .collect(Collectors.groupingBy( a -> a.data().filename() ) );
+                        .collect(Collectors.toList());
 
-        assertThat( ActionSupport.actionListForKeepActionWithDuplicateFilename( map ) ) // List<Action<FileData>>
+        assertThat( ActionSupport.actionListForKeepActionWithDuplicateFilename( list ) ) // List<Action<FileData>>
                 .isNotNull()
                 .isNotEmpty()
                 .hasSize( 2 )
@@ -258,7 +258,7 @@ public class ActionSupportTest {
     }
 
     @Test
-    void whenArgumentContainsOnlyMultipleKeepActionItemLists_ActionListForKeepActionWithDuplicateFilename_ReturnsEachItemWrappedInAKeepAction() {
+    void whenArgumentContainsOnlyMultipleKeepActionItemLists_actionListForKeepActionWithDuplicateFilename_ReturnsEachItemWrappedInAKeepActionOrKeepWithRenameAction() {
 
         var duplicateFilename = "filen";
 
@@ -274,18 +274,17 @@ public class ActionSupportTest {
                 .sizeInBytes( 2L )
                 .build();
 
-        var map = Stream.of(fd1, fd2)
+        var list = Stream.of(fd1, fd2)
                         .map( KeepAction::new )
                         .map(a -> (Action<FileData>) a)
-                        .collect(Collectors.groupingBy( a -> a.data().filename() ) );
+                        .collect(Collectors.toList());
 
-        var actionList = ActionSupport.actionListForKeepActionWithDuplicateFilename( map );
+        var actionList = ActionSupport.actionListForKeepActionWithDuplicateFilename( list );
 
         assertThat( actionList ) // List<Action<FileData>>
                 .isNotNull()
                 .isNotEmpty()
                 .hasSize( 2 )
-                .allMatch(action -> action instanceof KeepAction)
                 .map(Action::data) // List<FileData> (or stream of FileData ?)
                 .containsExactlyInAnyOrder( fd1, fd2);
 
@@ -300,7 +299,7 @@ public class ActionSupportTest {
 
 
     @Test
-    void whenArgumentContainsSingleItemListsAndMultipleItemKeepActionLists_ActionListForKeepActionWithDuplicateFilename_ReturnsEachItemWrappedInAKeepActionOrAKeepWithRenameAction() {
+    void whenArgumentContainsSingleItemListsAndMultipleItemKeepActionLists_actionListForKeepActionWithDuplicateFilename_ReturnsEachItemWrappedInAKeepActionOrAKeepWithRenameAction() {
 
         var duplicateFilename = "fileD";
         var uniqueFilename = "fileU";
@@ -323,12 +322,12 @@ public class ActionSupportTest {
                 .sizeInBytes( 3L )
                 .build();
 
-        var map = Stream.of(fd1, fd2, fd3)
+        var list = Stream.of(fd1, fd2, fd3)
                         .map( KeepAction::new )
                         .map(a -> (Action<FileData>) a)
-                        .collect(Collectors.groupingBy( a -> a.data().filename() ) );
+                        .collect(Collectors.toList());
 
-        var actionList = ActionSupport.actionListForKeepActionWithDuplicateFilename( map );
+        var actionList = ActionSupport.actionListForKeepActionWithDuplicateFilename( list );
 
         assertThat( actionList ) // List<Action<FileData>>
                 .isNotNull()
@@ -337,7 +336,7 @@ public class ActionSupportTest {
 
         assertThat( actionList )
                 .extracting( "class" )
-                .containsExactly( KeepAction.class, KeepWithRenameAction.class );
+                .containsExactly( KeepAction.class, KeepWithRenameAction.class, KeepAction.class );
 
         assertThat( actionList )
                 .map(Action::data) // List<FileData> (or stream of FileData ?)
@@ -345,49 +344,116 @@ public class ActionSupportTest {
     }
 
 
+
     @Test
-    void whenArgumentIsNullOrEmpty_ActionListFromGroupedActionList_ReturnsAnEmptyList() {
-        assertThat( ActionSupport.actionListFromGroupedActionList(null)).isEmpty();
-        assertThat( ActionSupport.actionListFromGroupedActionList(Map.of())).isEmpty();
+    void whenArgumentIsNullOrEmpty_actionListForUniqueFileWithDuplicateFilename_ReturnsAnEmptyList() {
+        assertThat( ActionSupport.actionListForUniqueFilesWithDuplicateFilename(null)).isEmpty();
+        assertThat( ActionSupport.actionListForUniqueFilesWithDuplicateFilename(List.of())).isEmpty();
     }
 
 
     @Test
-    void whenArgumentContainsAnyGroupedActionList_ActionListFromGroupedActionList_ReturnsAllActionsInAList() {
+    void whenArgumentContainsOnlySingleItemLists_actionListForUniqueFileWithDuplicateFilename_ReturnsEachItemWrappedInAKeepAction() {
 
-        var a1 = new KeepAction<>( new FileData.Builder()
+        var fd1 = new FileData.Builder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( 1L )
-                .build()
-        );
+                .build();
 
-        var a2 = new KeepWithRenameAction<>( new FileData.Builder()
+        var fd2 = new FileData.Builder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( 2L )
-                .build()
-        );
+                .build();
 
-        var a3 = new RemoveAction<>( new FileData.Builder()
-                .filename( "file3" )
-                .path( "path3")
-                .sizeInBytes( 3L )
-                .build()
-        );
+        var list = List.of(fd1, fd2);
 
-        Map<String, List<Action<FileData>>> map = Map.of(
-                a1.data().filename(), List.of( a1 ),
-                a2.data().filename(), List.of( a2 ),
-                a3.data().filename(), List.of( a3 )
-        );
-
-        var actionList = ActionSupport.actionListFromGroupedActionList(map);
-
-        assertThat( actionList )
+        assertThat( ActionSupport.actionListForUniqueFilesWithDuplicateFilename( list ) ) // List<Action<FileData>>
                 .isNotNull()
                 .isNotEmpty()
-                .hasSize( 3 )
-                .containsExactlyInAnyOrder( a1, a2, a3 );
+                .hasSize( 2 )
+                .allMatch(action -> action instanceof KeepAction)
+                .map(Action::data) // List<FileData> (or stream of FileData ?)
+                .containsExactlyInAnyOrder( fd1, fd2);
+    }
+
+
+    @Test
+    void whenArgumentContainsOnlyMultipleItemLists_actionListForUniqueFileWithDuplicateFilename_ReturnsEachItemWrappedInAKeepActionOrAKeepWithRenameAction() {
+
+        var duplicateFilename = "fileD";
+
+        var fd1 = new FileData.Builder()
+                .filename(duplicateFilename)
+                .path("path1")
+                .sizeInBytes( 1L )
+                .build();
+
+        var fd2 = new FileData.Builder()
+                .filename(duplicateFilename)
+                .path("path2")
+                .sizeInBytes( 2L )
+                .build();
+
+        var list = List.of(fd1, fd2);
+
+        var actionList = ActionSupport.actionListForUniqueFilesWithDuplicateFilename( list );
+
+        assertThat( actionList ) // List<Action<FileData>>
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize( 2 );
+
+        assertThat( actionList )
+                .extracting( "class" )
+                .containsExactly( KeepAction.class, KeepWithRenameAction.class );
+
+        assertThat( actionList )
+                .map(Action::data) // List<FileData> (or stream of FileData ?)
+                        .containsExactlyInAnyOrder( fd1, fd2 );
+    }
+
+
+    @Test
+    void whenArgumentContainsBothSingleItemListsAndMultipleItemLists_actionListForUniqueFileWithDuplicateFilename_ReturnsEachItemWrappedInAKeepActionOrAKeepWithRenameAction() {
+
+        var duplicateFilename = "fileD";
+        var uniqueFilename = "fileU";
+
+        var fd1 = new FileData.Builder()
+                .filename(duplicateFilename)
+                .path("path1")
+                .sizeInBytes( 1L )
+                .build();
+
+        var fd2 = new FileData.Builder()
+                .filename(duplicateFilename)
+                .path("path2")
+                .sizeInBytes( 2L )
+                .build();
+
+        var fd3 = new FileData.Builder()
+                .filename( uniqueFilename )
+                .path( "path3")
+                .sizeInBytes( 3L )
+                .build();
+
+        var list = List.of(fd1, fd2, fd3);
+
+        var actionList = ActionSupport.actionListForUniqueFilesWithDuplicateFilename( list );
+
+        assertThat( actionList ) // List<Action<FileData>>
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize( 3 );
+
+        assertThat( actionList )
+                .extracting( "class" )
+                .containsExactly( KeepAction.class, KeepWithRenameAction.class, KeepAction.class );
+
+        assertThat( actionList )
+                .map(Action::data) // List<FileData> (or stream of FileData ?)
+                .containsExactlyInAnyOrder( fd1, fd2, fd3 );
     }
 }

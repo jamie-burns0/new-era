@@ -1,13 +1,5 @@
 package me.jamieburns.operations;
 
-import java.io.IOException;
-import java.nio.file.FileStore;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +8,6 @@ import java.util.stream.Collectors;
 import me.jamieburns.data.FileData;
 
 public class GroupFilesSupport {
-
-    private static final long DEFAULT_BLOCK_SIZE = 4096L;
 
     private GroupFilesSupport() {}
 
@@ -55,244 +45,134 @@ public class GroupFilesSupport {
     // }
 
 
-    public static final Map<String, List<FileData>> regroupFilesByChunkHash( Map<?, List<FileData>> fileDataGroupedByAnything ) {
-
-        return regroupFilesByHash( fileDataGroupedByAnything, generateHashStringByChunkHashFn() );
-    }
-
-
-    static final ThrowingBiFunction<FileData, Long, String, Exception> generateHashStringByChunkHashFn() {
-
-        return ( fileData, chunkSize ) -> {
-
-            var digest = MessageDigest.getInstance("SHA-256");
-
-            try (var inputStream = Files.newInputStream(Paths.get(fileData.path()))) {
-
-                byte[] chunk = new byte[chunkSize.intValue()];
-                int bytesRead = inputStream.read(chunk);
-
-                if( bytesRead > 0 ) {
-                    digest.update(chunk, 0, bytesRead);
-                }
-            }
-
-            return convertBytesToHex(digest.digest());
-        };
-    }
-
-
-    public static final Map<String, List<FileData>> regroupFilesByFullHash( Map<?, List<FileData>> fileDataGroupedByAnything ) {
-
-        return regroupFilesByHash( fileDataGroupedByAnything, generateHashStringByFullHashFn() );
-    }
-
-
-    static final ThrowingBiFunction<FileData, Long, String, Exception> generateHashStringByFullHashFn() {
-
-        return ( fileData, chunkSize ) -> {
-
-            var digest = MessageDigest.getInstance("SHA-256");
-
-            try (var inputStream = Files.newInputStream(Paths.get(fileData.path()))) {
-
-                byte[] chunk = new byte[chunkSize.intValue()];
-                int bytesRead;
-
-                while ((bytesRead = inputStream.read(chunk)) != -1) {
-                    digest.update(chunk, 0, bytesRead);
-                }
-            }
-
-            return convertBytesToHex(digest.digest());
-        };
-    }
-
-    static final Map<String, List<FileData>> regroupFilesByHash(
-            Map<?, List<FileData>> fileDataGroupedByAnything,
-            ThrowingBiFunction<FileData, Long, String, Exception> hashFn ) {
-
-        if( fileDataGroupedByAnything == null || fileDataGroupedByAnything.isEmpty() ) {
-            return Map.of();
-        }
-
-        Map<String, List<FileData>> fileDataRegroupedByHash = new HashMap<>();
-
-        for( var fileDataList : fileDataGroupedByAnything.values() ) {
-
-            Map<String, List<FileData>> regroupedFileData = groupFilesByHash( fileDataList, hashFn );
-
-            for( var key : regroupedFileData.keySet() ) {
-                fileDataRegroupedByHash.computeIfAbsent( key, unused -> new ArrayList<FileData>() );
-                fileDataRegroupedByHash.get( key ).addAll( regroupedFileData.get( key ) );
-            }
-        }
-
-        return fileDataRegroupedByHash;
-    }
-
-
-    /**
-     * For reference only. Implementation of regroupFiles using Stream and Collectors apis
-     */
-    // Map<String, List<FileData>> regroupFilesStreamingAndCollectorsImpl( Map<?, List<FileData>> fileDataGroupedByAnything ) {
-
-    //     if( fileDataGroupedByAnything == null || fileDataGroupedByAnything.isEmpty() ) {
-    //         return Map.<String, List<FileData>>of();
-    //     }
-
-    //     return fileDataGroupedByAnything.values().stream()
-    //             .flatMap(fileDataList -> groupFiles(fileDataList).entrySet().stream())
-    //             .collect(Collectors.toMap(
-    //                     Map.Entry::getKey,
-    //                     Map.Entry::getValue,
-    //                     (existing, replacement) -> {
-    //                         existing.addAll(replacement);
-    //                         return existing;
-    //                     },
-    //                     HashMap::new
-    //             ));
-    // }
-
-
-    private static final Map<String, List<FileData>> groupFilesByHash(
-                List<FileData> fileDataList,
-                ThrowingBiFunction<FileData, Long, String, Exception> hashFn ) {
+    public static final Map<String, List<FileData>> groupFilesByFilename( List<FileData> fileDataList ) {
 
         if( fileDataList == null || fileDataList.isEmpty() ) {
             return Map.of();
         }
 
-        try {
-            return groupFilesByHashImpl(fileDataList, hashFn );
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Map.of();
-        }
-    }
-
-    private static final Map<String, List<FileData>> groupFilesByHashImpl(
-            List<FileData> fileDataList,
-            ThrowingBiFunction<FileData, Long, String, Exception> hashFn ) throws Exception {
-
-        long chunkSize = calculateChunkSize( fileDataList );
-
-        Map<String, List<FileData>> groupByHashMap = new HashMap<>();
-
-        for (FileData fileData : fileDataList) {
-
-            var hashString = hashFn.apply( fileData, chunkSize );
-
-            groupByHashMap
-                    .computeIfAbsent(hashString, k -> new ArrayList<>())
-                    .add( newFileData( fileData, hashString ) );
-        }
-
-        return groupByHashMap;
+        return fileDataList.stream()
+            .collect( Collectors.groupingBy( FileData::filename ));
     }
 
 
-    static final FileData newFileData( FileData fileData, String hashString ) {
-        return new FileData.Builder()
-            .fromFileData(fileData)
-            .hash( hashString )
-            .build();
-    }
-
-
-    private static final String convertBytesToHex(byte[] bytes) {
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : bytes) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
-        }
-        return hexString.toString();
-    }
-
-
-    static final long calculateChunkSize( List<FileData> fileDataList ) throws IOException{
+    public static final Map<String, List<FileData>> groupFilesByHash( List<FileData> fileDataList ) {
 
         if( fileDataList == null || fileDataList.isEmpty() ) {
-            return DEFAULT_BLOCK_SIZE;
+            return Map.of();
         }
 
-        var maxFileSize = fileDataList.stream()
-            .map(FileData::sizeInBytes)
-            .collect(
-                Collectors.maxBy(Comparator.naturalOrder())
-            )
-            .get();
-
-        var blockSize = 0L;
-
-        FileStore fileStore = Files.getFileStore(Paths.get(fileDataList.get(0).path()));
-        blockSize = fileStore.getBlockSize();
-
-        var idealChunkSize = Math.max((long) Math.ceil(maxFileSize * 0.2), 1);
-
-        return Math.ceilDiv(idealChunkSize, blockSize) * blockSize;
+        return fileDataList.stream()
+                .filter( fd -> fd.hash().isPresent() ) // we drop any FileData that has no hash
+                .collect( Collectors.groupingBy( fd -> fd.hash().get() ) );
     }
 
 
-    /**
-     * See https://github.com/pivovarit/throwing-function/blob/master/src/main/java/com/pivovarit/function/ThrowingBiFunction.java
-     */
-    @FunctionalInterface
-    interface ThrowingBiFunction<T, U, R, E extends Exception> {
-        R apply(T t, U u) throws E;
+    public static final PartitionResult partitionOnUniqueHash( List<FileData> fileDataList ) {
+
+        if( fileDataList == null || fileDataList.isEmpty() ) {
+            return new PartitionResult( List.of(), List.of() );
+        }
+
+        var result = fileDataList.stream()
+                .collect( Collectors.groupingBy( FileData::hash ) )
+                .values().stream()
+                .collect( Collectors.partitioningBy( list -> list.size() == 1) ) // partition on unique file size
+                .entrySet().stream()
+                .collect( Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .flatMap( List::stream )
+                                .collect( Collectors.toList() )
+                        )
+                );
+                // positive = list of files with a unique hash
+                // negative = all other files
+
+        return new PartitionResult( result.get( Boolean.TRUE ), result.get( Boolean.FALSE ) );
     }
 
 
-    public static final PartitionResult partitionOnUniqueness( Map<?, List<FileData>> groupedByMap ) {
+    public static final PartitionResult partitionOnZeroLengthFileSize( List<FileData> fileDataList ) {
 
-        if( groupedByMap == null || groupedByMap.isEmpty() ) {
-            return new PartitionResult( List.of(), Map.of() );
+        if( fileDataList == null || fileDataList.isEmpty() ) {
+            return new PartitionResult( List.of(), List.of() );
         }
 
-        List<FileData> uniqueItemList = new LinkedList<>();
-        Map<Object, List<FileData>> nonUniqueItemMap = new HashMap<>();
+        var result = fileDataList.stream()
+                .collect( Collectors.partitioningBy( fd -> fd.sizeInBytes() == 0 ) );
 
-        groupedByMap.entrySet().stream()
-                .forEach( e -> {
-                    if( e.getValue().size() == 1 ) {
-                        uniqueItemList.add( e.getValue().get(0) );
-                    }
-                    else {
-                        nonUniqueItemMap.put( e.getKey(), e.getValue() );
-                    }
-                });
-
-        return new PartitionResult( uniqueItemList, nonUniqueItemMap );
+        return new PartitionResult( result.get(Boolean.TRUE), result.get(Boolean.FALSE) );
     }
 
 
-    public static final PartitionResult partitionOnZeroLengthFileSize( Map<Long, List<FileData>> filesGroupedBySizeMap ) {
+    public static final PartitionResult partitionOnUniqueFileSizesWithDuplicateFilenames( List<FileData> fileDataList ) {
 
-        if( filesGroupedBySizeMap == null || filesGroupedBySizeMap.isEmpty() ) {
-            return new PartitionResult( List.of(), Map.of() );
+        if( fileDataList == null || fileDataList.isEmpty() ) {
+            return new PartitionResult(List.of(), List.of());
         }
 
-        if( filesGroupedBySizeMap.containsKey( 0L ) == false ) {
-            return new PartitionResult( List.of(), filesGroupedBySizeMap );
-        }
+        var negativeList = new LinkedList<FileData>();
 
-        List<FileData> zeroLengthItemList = new LinkedList<>();
-        Map<Long, List<FileData>> nonZeroLengthItemMap = new HashMap<>();
+        var partitionOnUniqueFileSizeMap = fileDataList.stream()
+                .collect( Collectors.groupingBy( FileData::sizeInBytes ) )
+                .values().stream()
+                .collect( Collectors.partitioningBy( list -> list.size() == 1) ) // partition on unique file size
+                .entrySet().stream()
+                .collect( Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .flatMap( List::stream )
+                                .collect( Collectors.toList() )
+                        )
+                );
+                // positive = list of unique file sizes
+                // negative = list of non-unique file sizes
 
-        filesGroupedBySizeMap.entrySet().stream()
-                .forEach( e -> {
-                    if( e.getKey() == 0 ) {
-                        zeroLengthItemList.addAll( e.getValue() );
-                    }
-                    else {
-                        nonZeroLengthItemMap.put( e.getKey(), e.getValue() );
-                    }
-                });
+        negativeList.addAll( partitionOnUniqueFileSizeMap.get( Boolean.FALSE ));
 
-        return new PartitionResult( zeroLengthItemList, nonZeroLengthItemMap );
+        var uniqueFileSizeGroupedOnDuplicateFilenameMap = partitionOnUniqueFileSizeMap.get( Boolean.TRUE ).stream()
+                .collect( Collectors.groupingBy( FileData::filename ))
+                .values().stream()
+                .collect( Collectors.partitioningBy( list -> list.size() > 1 ) )
+                .entrySet().stream()
+                .collect( Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .flatMap( List::stream )
+                                .collect( Collectors.toList() )
+                ));
+                // positive = list of unique file sizes with duplicate filenames
+                // negative = list of unique file sizes with unique filenames
+
+        negativeList.addAll( uniqueFileSizeGroupedOnDuplicateFilenameMap.get( Boolean.FALSE ) );
+
+        return new PartitionResult( uniqueFileSizeGroupedOnDuplicateFilenameMap.get( Boolean.TRUE ), negativeList );
     }
 
 
-    public record PartitionResult( List<FileData> positivePartitionList, Map<?, List<FileData>> negativePartitionMap ) {}
+    public static final PartitionResult partitionOnUniqueFileSizes( List<FileData> fileDataList ) {
+
+        if( fileDataList == null || fileDataList.isEmpty() ) {
+            return new PartitionResult(List.of(), List.of());
+        }
+
+        var map = fileDataList.stream()
+                .collect( Collectors.groupingBy( FileData::sizeInBytes ))
+                .values().stream()
+                .collect( Collectors.partitioningBy( list -> list.size() == 1 ) )
+                .entrySet().stream()
+                .collect( Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .flatMap( List::stream )
+                                .collect( Collectors.toList() )
+                        )
+                );
+
+        return new PartitionResult( map.get(Boolean.TRUE), map.get(Boolean.FALSE) );
+    }
+
+
+    public record PartitionResult( List<FileData> positivePartitionList, List<FileData> negativePartitionList ) {}
 }
