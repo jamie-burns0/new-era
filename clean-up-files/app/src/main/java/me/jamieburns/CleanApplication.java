@@ -1,15 +1,17 @@
 package me.jamieburns;
 
-import me.jamieburns.operations.KeepAction;
-import me.jamieburns.operations.RemoveAction;
+import me.jamieburns.actions.KeepAction;
+import me.jamieburns.actions.RemoveAction;
+import me.jamieburns.operations.CleanApplicationRunner;
+import me.jamieburns.operations.CleanApplicationRunner.RunnerArgs;
 
-public class CleanUpFilesMain {
+public class CleanApplication {
 
     public static void main(String[] args) {
 
-        var actionList = CleanUpFilesSupport.buildActionList(
+        var actionList = CleanApplicationRunner.run(
                 //new Args( "/mnt/c/Users/Jamie/OneDrive/Pictures-hp/jamie-iphone", "[Jj][Pp][Gg]$" ));
-                new Args( "/mnt/c/Users/Jamie/OneDrive/Pictures-hp", "[Jj][Pp][Gg]$" ));
+                new RunnerArgs( "/mnt/c/Users/Jamie/OneDrive/Pictures-hp", "[Jj][Pp][Gg]$" ));
                 //new Args( "/mnt/c/Users/Jamie/AppData/Local/Temp/clean-files-test", "([Jj][Pp][Gg]|txt)$" ));
 
         var moveActionCount = actionList.stream()
@@ -32,6 +34,4 @@ public class CleanUpFilesMain {
                         a.data().hash()
                 )));
     }
-
-    public record Args( String path, String filenameFilter ) {}
 }

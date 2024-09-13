@@ -1,4 +1,4 @@
-package me.jamieburns.operations;
+package me.jamieburns.actions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,7 +38,7 @@ public class RemoveActionTest {
             .hash( expectedHash )
             .build();
 
-        var ra2 = new KeepAction<>( fd2 );
+        var ra2 = new RemoveAction<>( fd2 );
 
         assertThat( ra2.data() ).isEqualTo( fd2 );
         assertThat( ra2.data().filename() ).isEqualTo( expectedFileName );

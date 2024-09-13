@@ -1,4 +1,4 @@
-package me.jamieburns.operations;
+package me.jamieburns.actions;
 
 public sealed interface Action<T>
     permits KeepAction, KeepWithRenameAction, RemoveAction {

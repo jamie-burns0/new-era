@@ -1,4 +1,4 @@
-package me.jamieburns.operations;
+package me.jamieburns.actions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import me.jamieburns.data.FileData;
 
-public class MoveActionTest {
+public class KeepActionTest {
 
     @Test
     public void moveActionShouldReturnProvidedFileDataAsIs() {

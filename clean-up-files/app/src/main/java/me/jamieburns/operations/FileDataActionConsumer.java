@@ -2,6 +2,10 @@ package me.jamieburns.operations;
 
 import java.util.function.Consumer;
 
+import me.jamieburns.actions.Action;
+import me.jamieburns.actions.KeepAction;
+import me.jamieburns.actions.KeepWithRenameAction;
+import me.jamieburns.actions.RemoveAction;
 import me.jamieburns.data.FileData;
 
 public class FileDataActionConsumer implements Consumer<Action<FileData>> {
