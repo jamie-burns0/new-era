@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import me.jamieburns.actions.Action;
 import me.jamieburns.actions.KeepAction;
 import me.jamieburns.data.FileData;
+import me.jamieburns.support.Timer;
 
 public final class KeepActionItemsWithDuplicateFilenamesPartitioner implements Partitioner {
 
@@ -18,6 +19,7 @@ public final class KeepActionItemsWithDuplicateFilenamesPartitioner implements P
         }
 
         List<Action<FileData>> negativeList = new LinkedList<>();
+        var timer = new Timer<>(KeepActionItemsWithDuplicateFilenamesPartitioner.class).start();
 
         var partitionMap = actionList.stream()
                 .collect( Collectors.partitioningBy( a -> a instanceof KeepAction ) );
@@ -39,7 +41,7 @@ public final class KeepActionItemsWithDuplicateFilenamesPartitioner implements P
                 ));
 
         negativeList.addAll( partitionMap2.get( Boolean.FALSE ) );
-
+        timer.stop();
         return new PartitionResult<>( partitionMap2.get( Boolean.TRUE ), negativeList );
         // positive = all KeepAction items with duplicate filenames
         // negative = all other KeepAction items

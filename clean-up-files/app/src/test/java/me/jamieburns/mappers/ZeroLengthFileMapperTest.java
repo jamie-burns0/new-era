@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import me.jamieburns.actions.Action;
 import me.jamieburns.actions.RemoveAction;
-import me.jamieburns.data.FileData;
+import me.jamieburns.data.FileDataBuilder;
+
 
 public class ZeroLengthFileMapperTest {
 
@@ -22,13 +23,13 @@ public class ZeroLengthFileMapperTest {
     @Test
     void whenArgumentContainsOnlyItemsWithZeroLengthFiles_ZeroLengthFileMapper_ReturnsEachItemWrappedInARemoveAction() {
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( 0L )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( 0L )
@@ -48,13 +49,13 @@ public class ZeroLengthFileMapperTest {
 
         var nonZeroLengthFile = 1L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( nonZeroLengthFile )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( nonZeroLengthFile )
@@ -72,19 +73,19 @@ public class ZeroLengthFileMapperTest {
         var zeroLengthFile = 0L;
         var nonZeroLengthFile = 1L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( zeroLengthFile )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( nonZeroLengthFile )
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes( zeroLengthFile )

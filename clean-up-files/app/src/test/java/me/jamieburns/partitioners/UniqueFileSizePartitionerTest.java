@@ -3,10 +3,11 @@ package me.jamieburns.partitioners;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.from;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
-import me.jamieburns.data.FileData;
-import java.util.List;
+import me.jamieburns.data.FileDataBuilder;
 
 public class UniqueFileSizePartitionerTest {
 
@@ -26,19 +27,19 @@ public class UniqueFileSizePartitionerTest {
     @Test
     void whenArgumentContainsOnlyItemsWithUniqueFileSizes_partitionOnUniqueFileSizes_ReturnsAPartitionResultWithAnEmptyNegativeListAndAllItemsInThePositiveList() {
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes(2L)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes(3L)
@@ -59,19 +60,19 @@ public class UniqueFileSizePartitionerTest {
     @Test
     void whenArgumentContainsOnlyItemsWithDuplicateFileSizes_partitionOnUniqueFileSizes_ReturnsAPartitionResultWithAnEmptyPositiveListAndAllItemsInTheNegativeList() {
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes(1L)
@@ -96,25 +97,25 @@ public class UniqueFileSizePartitionerTest {
         var uniqueFileSize2 = 2L;
         var duplicateFileSize = 3L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes(uniqueFileSize1)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes(duplicateFileSize)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes(uniqueFileSize2)
                 .build();
 
-        var fd4 = new FileData.Builder()
+        var fd4 = new FileDataBuilder()
                 .filename("file4")
                 .path("path4")
                 .sizeInBytes(duplicateFileSize)

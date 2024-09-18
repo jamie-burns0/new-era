@@ -1,4 +1,4 @@
-package me.jamieburns.operations;
+package me.jamieburns.support;
 
 import java.util.function.Consumer;
 

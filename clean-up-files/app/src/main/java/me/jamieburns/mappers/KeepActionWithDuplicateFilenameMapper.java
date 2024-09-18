@@ -8,6 +8,7 @@ import me.jamieburns.actions.Action;
 import me.jamieburns.actions.KeepAction;
 import me.jamieburns.actions.KeepWithRenameAction;
 import me.jamieburns.data.FileData;
+import me.jamieburns.support.Timer;
 
 public final class KeepActionWithDuplicateFilenameMapper implements Mapper {
 
@@ -16,6 +17,7 @@ public final class KeepActionWithDuplicateFilenameMapper implements Mapper {
         if( actionList == null || actionList.size() == 0 ) {
             return List.of();
         }
+        var timer = new Timer<>(KeepActionWithDuplicateFilenameMapper.class).start();
 
         var groupedByList = actionList.stream()
                 .collect( Collectors.groupingBy( a -> a.data().filename() ) );
@@ -30,7 +32,7 @@ public final class KeepActionWithDuplicateFilenameMapper implements Mapper {
                 newActionList.add( new KeepWithRenameAction<FileData>( list.get(index).data()));
             }
         }
-
+        timer.stop();
         return newActionList;
     }
 

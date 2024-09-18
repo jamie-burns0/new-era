@@ -8,6 +8,7 @@ import me.jamieburns.actions.Action;
 import me.jamieburns.actions.KeepAction;
 import me.jamieburns.actions.RemoveAction;
 import me.jamieburns.data.FileData;
+import me.jamieburns.support.Timer;
 
 public final class DuplicateFilesMapper implements Mapper {
 
@@ -18,6 +19,7 @@ public final class DuplicateFilesMapper implements Mapper {
         }
 
         var actionList = new LinkedList<Action<FileData>>();
+        var timer = new Timer<>(DuplicateFilesMapper.class).start();
 
         for( var list : groupedItemsMap.values() ) {
 
@@ -27,7 +29,7 @@ public final class DuplicateFilesMapper implements Mapper {
                 actionList.add( new RemoveAction<FileData>( list.get(index)));
             }
         }
-
+        timer.stop();
         return actionList;
     }
 

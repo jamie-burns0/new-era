@@ -1,4 +1,4 @@
-package me.jamieburns.operations;
+package me.jamieburns.support;
 
 import java.util.List;
 import java.util.Map;
@@ -60,9 +60,11 @@ public class GroupFilesSupport {
         if( fileDataList == null || fileDataList.isEmpty() ) {
             return Map.of();
         }
-
-        return fileDataList.stream()
+        var timer = new Timer<>( "GroupFilesSupport.groupFilesByHash" ).start();
+        var result = fileDataList.stream()
                 .filter( fd -> fd.hash().isPresent() ) // we drop any FileData that has no hash
                 .collect( Collectors.groupingBy( fd -> fd.hash().get() ) );
+        timer.stop();
+        return result;
     }
 }

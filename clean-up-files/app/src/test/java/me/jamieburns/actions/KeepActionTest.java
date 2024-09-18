@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import me.jamieburns.data.FileData;
+import me.jamieburns.data.FileDataBuilder;
+
 
 public class KeepActionTest {
 
@@ -15,7 +16,7 @@ public class KeepActionTest {
         var expectedPath = "p";
         var expectedSizeInBytes = 1;
 
-        var fd = new FileData.Builder()
+        var fd = new FileDataBuilder()
                 .filename( expectedFileName )
                 .path( expectedPath )
                 .sizeInBytes( expectedSizeInBytes )
@@ -31,7 +32,7 @@ public class KeepActionTest {
 
         var expectedHash = "hash";
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
             .filename( expectedFileName )
             .path( expectedPath )
             .sizeInBytes( expectedSizeInBytes )

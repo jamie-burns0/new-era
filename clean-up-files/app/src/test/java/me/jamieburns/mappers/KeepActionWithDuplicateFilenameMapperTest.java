@@ -12,6 +12,7 @@ import me.jamieburns.actions.Action;
 import me.jamieburns.actions.KeepAction;
 import me.jamieburns.actions.KeepWithRenameAction;
 import me.jamieburns.data.FileData;
+import me.jamieburns.data.FileDataBuilder;
 
 public class KeepActionWithDuplicateFilenameMapperTest {
 
@@ -23,22 +24,22 @@ public class KeepActionWithDuplicateFilenameMapperTest {
 
     @Test
     void whenArgumentContainsOnlyKeepActionsItemsWithDuplicateFileDataItems_KeepActionWithDuplicateFilenameMapper_ReturnsAListWithOneDuplicateFileDataItemWrappedInAKeepActionAndAllOtherDuplicateItemsWrappedInAKeepWithRenameAction() {
- 
+
         var duplicateFilename = "duplicatefilename";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path1")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path2")
                 .sizeInBytes(2L)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path3")
                 .sizeInBytes(3L)
@@ -79,24 +80,24 @@ public class KeepActionWithDuplicateFilenameMapperTest {
 
     @Test
     void whenArgumentContainsOnlyUniqueItems_KeepActionWithDuplicateFilenameMapper_ReturnsAListWithAllItemsWrappedInAKeepAction() {
- 
+
         var uniqueFilename1 = "filename1";
         var uniqueFilename2 = "filename2";
         var uniqueFilename3 = "filename3";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(uniqueFilename1)
                 .path("path1")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(uniqueFilename2)
                 .path("path2")
                 .sizeInBytes(2L)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(uniqueFilename3)
                 .path("path3")
                 .sizeInBytes(3L)
@@ -126,19 +127,19 @@ public class KeepActionWithDuplicateFilenameMapperTest {
         var duplicateFilename = "fileD";
         var uniqueFilename = "fileU";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path1")
                 .sizeInBytes( 1L )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path2")
                 .sizeInBytes( 2L )
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename( uniqueFilename )
                 .path( "path3")
                 .sizeInBytes( 3L )
@@ -161,6 +162,6 @@ public class KeepActionWithDuplicateFilenameMapperTest {
 
         assertThat( actionList )
                 .map(Action::data) // List<FileData> (or stream of FileData ?)
-                .containsExactlyInAnyOrder( fd1, fd2, fd3 ); 
+                .containsExactlyInAnyOrder( fd1, fd2, fd3 );
     }
 }

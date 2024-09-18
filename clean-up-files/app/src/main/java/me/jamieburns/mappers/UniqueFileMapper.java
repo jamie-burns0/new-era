@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import me.jamieburns.actions.Action;
 import me.jamieburns.actions.KeepAction;
 import me.jamieburns.data.FileData;
+import me.jamieburns.support.Timer;
 
 public final class UniqueFileMapper implements Mapper {
 
@@ -14,10 +15,12 @@ public final class UniqueFileMapper implements Mapper {
         if( fileDataList == null || fileDataList.isEmpty() ) {
             return List.of();
         }
-
-        return fileDataList.stream()
+        var timer = new Timer<>(UniqueFileMapper.class).start();
+        List<Action<FileData>> result = fileDataList.stream()
                 .map( item -> new KeepAction<>( item ) )
                 .collect( Collectors.toList() );
+        timer.stop();
+        return result;
     }
 
 }

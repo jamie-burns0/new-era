@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import me.jamieburns.actions.Action;
 import me.jamieburns.actions.KeepAction;
 import me.jamieburns.data.FileData;
+import me.jamieburns.data.FileDataBuilder;
+
 
 public class KeepActionItemsWithDuplicateFilenamesPartitionerTest {
 
@@ -33,19 +35,19 @@ public class KeepActionItemsWithDuplicateFilenamesPartitionerTest {
 
         var duplicateFilename = "duplicatefilename";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path1")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path2")
                 .sizeInBytes(2L)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path3")
                 .sizeInBytes(3L)
@@ -75,19 +77,19 @@ public class KeepActionItemsWithDuplicateFilenamesPartitionerTest {
         var uniqueFilename2 = "filename2";
         var uniqueFilename3 = "filename3";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(uniqueFilename1)
                 .path("path1")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(uniqueFilename2)
                 .path("path2")
                 .sizeInBytes(2L)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(uniqueFilename3)
                 .path("path3")
                 .sizeInBytes(3L)
@@ -117,25 +119,25 @@ public class KeepActionItemsWithDuplicateFilenamesPartitionerTest {
         var uniqueFilename1 = "uniquefilename1";
         var uniqueFilename2 = "uniquefilename2";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(uniqueFilename1)
                 .path("path1")
                 .sizeInBytes(1L)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path2")
                 .sizeInBytes(2L)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(uniqueFilename2)
                 .path("path3")
                 .sizeInBytes(3L)
                 .build();
 
-        var fd4 = new FileData.Builder()
+        var fd4 = new FileDataBuilder()
                 .filename(duplicateFilename)
                 .path("path4")
                 .sizeInBytes(4L)

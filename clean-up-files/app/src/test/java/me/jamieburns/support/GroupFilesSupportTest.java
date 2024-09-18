@@ -1,12 +1,13 @@
-package me.jamieburns.operations;
+package me.jamieburns.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import me.jamieburns.data.FileData;
-
-import java.util.List;
+import me.jamieburns.data.FileDataBuilder;
 
 public class GroupFilesSupportTest {
 
@@ -24,19 +25,19 @@ public class GroupFilesSupportTest {
         var filename2 = "file2";
         var filename3 = "file3";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(filename1)
                 .path("path1")
                 .sizeInBytes( 1L )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(filename2)
                 .path("path2")
                 .sizeInBytes( 2L )
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(filename3)
                 .path("path3")
                 .sizeInBytes( 3L )
@@ -63,25 +64,25 @@ public class GroupFilesSupportTest {
         var duplicateFilename1 = "file1";
         var duplicateFilename2 = "file2";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(duplicateFilename1)
                 .path("path1")
                 .sizeInBytes( 1L )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(duplicateFilename2)
                 .path("path2")
                 .sizeInBytes( 2L )
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(duplicateFilename1)
                 .path("path3")
                 .sizeInBytes( 3L )
                 .build();
 
-        var fd4 = new FileData.Builder()
+        var fd4 = new FileDataBuilder()
                 .filename(duplicateFilename2)
                 .path("path4")
                 .sizeInBytes( 4L )
@@ -110,37 +111,37 @@ public class GroupFilesSupportTest {
         var duplicateFilename1 = "file3";
         var duplicateFilename2 = "file4";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename(uniqueFilename1)
                 .path("path1")
                 .sizeInBytes( 1L )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename(uniqueFilename2)
                 .path("path2")
                 .sizeInBytes( 2L )
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename(duplicateFilename1)
                 .path("path3")
                 .sizeInBytes( 3L )
                 .build();
 
-        var fd4 = new FileData.Builder()
+        var fd4 = new FileDataBuilder()
                 .filename(duplicateFilename1)
                 .path("path4")
                 .sizeInBytes( 4L )
                 .build();
 
-        var fd5 = new FileData.Builder()
+        var fd5 = new FileDataBuilder()
                 .filename(duplicateFilename2)
                 .path("path5")
                 .sizeInBytes( 5L )
                 .build();
 
-        var fd6 = new FileData.Builder()
+        var fd6 = new FileDataBuilder()
                 .filename(duplicateFilename2)
                 .path("path6")
                 .sizeInBytes( 6L )
@@ -158,5 +159,5 @@ public class GroupFilesSupportTest {
             .extractingByKeys( uniqueFilename1, uniqueFilename2, duplicateFilename1, duplicateFilename2 )
             .flatExtracting( list -> (List<FileData>) list )
             .containsExactlyInAnyOrder( fd1, fd2, fd3, fd4, fd5, fd6 );
-    }    
+    }
 }

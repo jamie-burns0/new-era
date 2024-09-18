@@ -1,4 +1,4 @@
-package me.jamieburns.operations;
+package me.jamieburns.support;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import me.jamieburns.data.FileData;
+import me.jamieburns.data.FileDataBuilder;
 
 public class GroupFilesSupport_GroupBySizeTest {
 
@@ -44,19 +45,19 @@ public class GroupFilesSupport_GroupBySizeTest {
         var size1 = 1L;
         var size2 = 2L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
             .filename( "fn1" )
             .path( "p1" )
             .sizeInBytes(size1)
             .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
             .filename( "fn2" )
             .path( "p2" )
             .sizeInBytes(size2)
             .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
             .filename( "fn3" )
             .path( "p3" )
             .sizeInBytes(size1)
@@ -91,7 +92,7 @@ public class GroupFilesSupport_GroupBySizeTest {
 
         var size = 1L;
 
-        var fd = new FileData.Builder()
+        var fd = new FileDataBuilder()
             .filename( "fn1" )
             .path( "p1" )
             .sizeInBytes(size)
@@ -114,19 +115,19 @@ public class GroupFilesSupport_GroupBySizeTest {
 
         var size = 1L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
             .filename( "fn1" )
             .path( "p1" )
             .sizeInBytes(size)
             .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
             .filename( "fn2" )
             .path( "p2" )
             .sizeInBytes(size)
             .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
             .filename( "fn3" )
             .path( "p3" )
             .sizeInBytes(size)

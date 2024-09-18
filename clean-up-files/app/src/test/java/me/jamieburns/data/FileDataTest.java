@@ -31,7 +31,7 @@ public class FileDataTest {
         var expectedPath = "test path";
         var expectedSizeInBytes = 100L;
 
-        var fd = new FileData.Builder()
+        var fd = new FileDataBuilder()
                 .filename( expectedFileName )
                 .path( expectedPath )
                 .sizeInBytes( expectedSizeInBytes )
@@ -52,7 +52,7 @@ public class FileDataTest {
         var expectedSizeInBytes = 100L;
         var expectedHash = "hash string";
 
-        var fd = new FileData.Builder()
+        var fd = new FileDataBuilder()
                 .filename( expectedFileName)
                 .path( expectedPath)
                 .sizeInBytes( expectedSizeInBytes )
@@ -75,7 +75,7 @@ public class FileDataTest {
 
         var fd1 = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, expectedHash );
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .fromFileData( fd1 )
                 .build();
 
@@ -94,7 +94,7 @@ public class FileDataTest {
 
         var fd1 = new FileData( "fn", "p", 1, Optional.of("ch") );
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .fromFileData( fd1 )
                 .filename( expectedFileName )
                 .path( expectedPath )
@@ -120,7 +120,7 @@ public class FileDataTest {
 
         var fd1 = new FileData( "filename to override", expectedPath, expectedSizeInBytes, Optional.of("hash string to override") );
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .fromFileData( fd1 )
                 .filename( expectedFileName )
                 .hash( expectedHash )
@@ -145,7 +145,7 @@ public class FileDataTest {
 
         var fd1 = new FileData( expectedFileName, expectedPath, expectedSizeInBytes, Optional.of(expectedHash) );
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename( "fn" )
                 .path( "p" )
                 .sizeInBytes( 1 )

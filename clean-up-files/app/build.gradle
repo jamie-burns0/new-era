@@ -43,3 +43,9 @@ application {
     // Define the main class for the application.
     mainClass = 'me.jamieburns.CleanApplication'
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+}

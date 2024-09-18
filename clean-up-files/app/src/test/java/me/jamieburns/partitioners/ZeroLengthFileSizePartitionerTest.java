@@ -3,11 +3,12 @@ package me.jamieburns.partitioners;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.from;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import me.jamieburns.data.FileData;
-
-import java.util.List; // Add this import statement
+import me.jamieburns.data.FileDataBuilder;
 
 public class ZeroLengthFileSizePartitionerTest {
 
@@ -29,13 +30,13 @@ public class ZeroLengthFileSizePartitionerTest {
 
         var zeroLengthFileSize = 0L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( zeroLengthFileSize )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( zeroLengthFileSize )
@@ -60,13 +61,13 @@ public class ZeroLengthFileSizePartitionerTest {
 
         var nonZeroLengthFileSize = 1L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( nonZeroLengthFileSize )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( nonZeroLengthFileSize )
@@ -92,19 +93,19 @@ public class ZeroLengthFileSizePartitionerTest {
         var zeroLengthFileSize = 0L;
         var nonZeroLengthFileSize = 1L;
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( zeroLengthFileSize )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( zeroLengthFileSize )
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes( nonZeroLengthFileSize )
@@ -125,5 +126,5 @@ public class ZeroLengthFileSizePartitionerTest {
                 .isNotEmpty()
                 .hasSize( 1 )
                 .containsExactlyInAnyOrder( fd3 );
-    }    
+    }
 }

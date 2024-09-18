@@ -18,3 +18,25 @@ See,
 - was not able to apply DOP to GroupFiles as sealed...permits prevents Mockito from mocking - it can't create a mock because the mock class it instantiates is not in the permits list
 - classes modelling data are only data, so, there is no value in unit testing them
 - trying to apply DOP to GroupFiles and being blocked by Mockito - probably a smell that GroupFiles are not classes modelling data and only data
+
+
+# VisualVM
+
+```
+/opt/java/jdk-22.0.2/bin/java -Dcom.sun.management.jmxremote=true -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.port=9991 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.registry.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.net.preferIPv4Stack=true -jar ./app/build/libs/app.jar me.jamieburns.CleanApplication
+```
+
+
+# Accessing network drive mapped on host
+- https://dev.to/rpalo/mounting-network-drives-into-windows-subsystem-linux-3ef7
+
+```
+net use x: \\10.0.0.5\jamie /USER:cleanfiles secret
+```
+
+```
+sudo mkdir /mnt/x
+sudo mount -t drvfs x: /mnt/x
+
+sudo umount /mnt/x
+```

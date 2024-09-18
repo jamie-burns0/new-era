@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.from;
 
 import org.junit.jupiter.api.Test;
 
-import me.jamieburns.data.FileData;
+import me.jamieburns.data.FileDataBuilder;
 import java.util.List;
 
 public class UniqueHashPartitionerTest {
@@ -30,21 +30,21 @@ public class UniqueHashPartitionerTest {
         var uniqueHash2 = "hash2";
         var uniqueHash3 = "hash3";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes(1L)
                 .hash(uniqueHash1)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes(2L)
                 .hash(uniqueHash2)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes(3L)
@@ -68,21 +68,21 @@ public class UniqueHashPartitionerTest {
 
         var duplicateHash = "duplicatehash";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes(1L)
                 .hash(duplicateHash)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes(1L)
                 .hash(duplicateHash)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes(1L)
@@ -108,28 +108,28 @@ public class UniqueHashPartitionerTest {
         var uniqueHash1 = "uniqueHash1";
         var uniqueHash2 = "uniqueHash2";
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes(1L)
                 .hash(duplicateHash)
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes(2L)
                 .hash(uniqueHash1)
                 .build();
 
-        var fd3 = new FileData.Builder()
+        var fd3 = new FileDataBuilder()
                 .filename("file3")
                 .path("path3")
                 .sizeInBytes(3L)
                 .hash(duplicateHash)
                 .build();
 
-        var fd4 = new FileData.Builder()
+        var fd4 = new FileDataBuilder()
                 .filename("file4")
                 .path("path4")
                 .sizeInBytes(4L)

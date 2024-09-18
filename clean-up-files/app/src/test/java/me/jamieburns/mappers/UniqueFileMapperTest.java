@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import me.jamieburns.actions.Action;
 import me.jamieburns.actions.KeepAction;
-import me.jamieburns.data.FileData;
+import me.jamieburns.data.FileDataBuilder;
+
 
 public class UniqueFileMapperTest {
 
@@ -22,13 +23,13 @@ public class UniqueFileMapperTest {
     @Test
     void whenArgumentContainsFileDataItems_UniqueFileMapper_ReturnsEachItemWrappedInAKeepAction() {
 
-        var fd1 = new FileData.Builder()
+        var fd1 = new FileDataBuilder()
                 .filename("file1")
                 .path("path1")
                 .sizeInBytes( 0L )
                 .build();
 
-        var fd2 = new FileData.Builder()
+        var fd2 = new FileDataBuilder()
                 .filename("file2")
                 .path("path2")
                 .sizeInBytes( 0L )

@@ -13,50 +13,8 @@ public record FileData( String filename, String path, long sizeInBytes, Optional
         }
     }
 
-    public static class Builder {
-
-        private String filename;
-        private String path;
-        private long sizeInBytes;
-        private Optional<String> hash = Optional.empty();
-
-        public Builder filename(String filename) {
-            this.filename = filename;
-            return this;
-        }
-
-        public Builder path(String path) {
-            this.path = path;
-            return this;
-        }
-
-        public Builder sizeInBytes(long sizeInBytes) {
-            this.sizeInBytes = sizeInBytes;
-            return this;
-        }
-
-        public Builder hash(String hash) {
-            this.hash = Optional.ofNullable( hash );
-            return this;
-        }
-
-        public Builder fromFileData( FileData fileData ) {
-
-            if( fileData == null ) {
-                return this;
-            }
-
-            this.filename = fileData.filename;
-            this.path = fileData.path;
-            this.sizeInBytes = fileData.sizeInBytes;
-            this.hash = fileData.hash;
-
-            return this;
-        }
-
-        public FileData build() {
-            return new FileData(filename, path, sizeInBytes, hash);
-        }
+    public static FileData newFileDataWithHash( FileData fileData, String hash ) {
+        return new FileData( fileData.filename(), fileData.path(), fileData.sizeInBytes(), Optional.of( hash ) );
     }
 }
 

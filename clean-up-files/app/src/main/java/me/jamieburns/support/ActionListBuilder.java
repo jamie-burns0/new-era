@@ -1,4 +1,4 @@
-package me.jamieburns.operations;
+package me.jamieburns.support;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -79,7 +79,7 @@ public class ActionListBuilder {
 
         // handle files that have a unique chunk hash - case (5) + partial (2) (duplicate names handled later)
 
-        fileDataList = FilesSupport.rebuildWithChunkHash( partitionResult.negativePartitionList() );
+        fileDataList = FileDataSupport.rebuildWithChunkHash( partitionResult.negativePartitionList() );
         partitionResult = UniqueHashPartitioner.partition( fileDataList );
         actionList.addAll( UniqueFileMapper.toActionList( partitionResult.positivePartitionList() ) );
         System.out.println( "[ActionListBuilder]: With unique chunk hash: actionList.size=%s".formatted( actionList.size()));
@@ -87,7 +87,7 @@ public class ActionListBuilder {
 
         // handle files that have a unique full hash - case (5) + partial (2) (duplicate names handled later)
 
-        fileDataList = FilesSupport.rebuildWithFullHash( partitionResult.negativePartitionList() );
+        fileDataList = FileDataSupport.rebuildWithFullHash( partitionResult.negativePartitionList() );
         partitionResult = UniqueHashPartitioner.partition( fileDataList );
         actionList.addAll( UniqueFileMapper.toActionList( partitionResult.positivePartitionList() ) );
         System.out.println( "[ActionListBuilder]: With unique full hash: actionList.size=%s".formatted( actionList.size()));

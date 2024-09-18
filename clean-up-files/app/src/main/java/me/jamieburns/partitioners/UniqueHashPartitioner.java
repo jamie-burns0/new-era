@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import me.jamieburns.data.FileData;
+import me.jamieburns.support.Timer;
 
 public final class UniqueHashPartitioner implements Partitioner {
 
@@ -14,6 +15,7 @@ public final class UniqueHashPartitioner implements Partitioner {
             return new PartitionResult<>( List.of(), List.of() );
         }
 
+        var timer = new Timer<>(UniqueHashPartitioner.class).start();
         var result = fileDataList.stream()
                 .collect( Collectors.groupingBy( FileData::hash ) )
                 .values().stream()
@@ -26,7 +28,7 @@ public final class UniqueHashPartitioner implements Partitioner {
                                 .collect( Collectors.toList() )
                         )
                 );
-
+        timer.stop();
         return new PartitionResult<>( result.get( Boolean.TRUE ), result.get( Boolean.FALSE ) );
         // positive = list of files with a unique hash
         // negative = all other files
