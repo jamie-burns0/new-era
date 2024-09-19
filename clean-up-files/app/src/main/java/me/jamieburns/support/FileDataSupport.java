@@ -1,7 +1,6 @@
 package me.jamieburns.support;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,7 +8,6 @@ import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -21,9 +19,6 @@ public class FileDataSupport {
 
     private static final long DEFAULT_BLOCK_SIZE = 4096L;
     private static final String DEFAULT_MESSAGE_DIGEST_ALGORITHM = "SHA-256";
-
-    private static final Predicate<String> DEFAULT_FILENAME_PREDICATE = Pattern.compile( ".*" ).asPredicate();
-    private static final Pattern FILENAME_PATTERN = Pattern.compile( "[^/]+$" );
 
     static final List<FileData> collectFileData( String path, String matchFilenameToRegex ) {
 
@@ -187,18 +182,6 @@ public class FileDataSupport {
     }
 
 
-    // private static final long calculateChunkSize( FileData fileData, long blockSize ) throws IOException{
-
-    //     if( fileData == null ) {
-    //         return DEFAULT_BLOCK_SIZE;
-    //     }
-
-    //     var idealChunkSize = Math.max((long) Math.ceil( fileData.sizeInBytes() * 0.2), 1);
-
-    //     return Math.ceilDiv(idealChunkSize, blockSize) * blockSize;
-    // }
-
-
     private static final String convertBytesToHex(byte[] bytes) {
 
         StringBuilder hexString = new StringBuilder();
@@ -209,6 +192,7 @@ public class FileDataSupport {
         }
         return hexString.toString();
     }
+
 
     @FunctionalInterface
     interface ThrowingFunction<T, R, E extends Exception> {
