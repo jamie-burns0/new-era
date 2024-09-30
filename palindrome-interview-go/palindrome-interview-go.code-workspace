@@ -1,0 +1,15 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.parameterHints.enabled": false,
+        "editor.quickSuggestionsDelay": 3000,
+        "editor.inlineSuggest.showToolbar": "onHover",
+        "editor.inlineSuggest.enabled": false,
+        "editor.detectIndentation": false,
+        "go.goroot": "/opt/go/go1.23.1"
+    }
+}
