@@ -16,3 +16,6 @@ Rational is, I'm trying this approach over having a repository per language or a
 
 ### Rust
 - https://github.com/jamie-burns0/new-era/tree/rust
+
+### Go
+- https://github.com/jamie-burns0/new-era/tree/go
