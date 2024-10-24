@@ -1,3 +1,15 @@
+# Archive
+
+### re-homed each language branch to a per-language repository. For example, new-era/java --> java
+
+|   | re-homed to |
+| - | ----------- |
+| __java__ | https://github.com/jamie-burns0/java |
+| __go__ | https://github.com/jamie-burns0/go |
+| __python__ | https://github.com/jamie-burns0/python |
+| __typescript__ | https://github.com/jamie-burns0/typescript |
+| __rust__ | https://github.com/jamie-burns0/rust |
+
 # new-era
 This is kind of a workspace area for small coding projects in various languages - Java, Python, Typescript and Rust.
 
